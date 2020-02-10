@@ -1,7 +1,6 @@
 
 
 // Require dependencies
-const p = require('doasync');
 const MQuery = require('@edenjs/mquery');
 const { MongoClient, ObjectId } = require('mongodb');
 
@@ -45,8 +44,17 @@ class EdenModelMongo {
    * Async method that resolves on internal API build completion
    */
   async build() {
-    // Await connecting to MongoDb and internally store client connection
-    this._client = await p(MongoClient).connect(this._config.url);
+    // create client
+    this._client = await new Promise((resolve, reject) => {
+      // connect
+      MongoClient.connect(this._config.url, (err, client) => {
+        // reject
+        if (err) return reject(err);
+
+        // resolve client
+        resolve(client);
+      });
+    });
 
     // Internally store db by name provided in config
     this._db = this._client.db(this._config.db);
