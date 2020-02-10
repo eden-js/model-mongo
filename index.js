@@ -13,9 +13,6 @@ class EdenModelMongo {
    * Construct MongoDb database plug class
    */
   constructor(config) {
-    // run super
-    super();
-
     // Store config
     this._config = config;
 
