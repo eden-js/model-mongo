@@ -27,6 +27,7 @@ class EdenModelMongo {
     this._queryToCursor = this._queryToCursor.bind(this);
 
     // Bind public methods to self
+    this.raw = this.raw.bind(this);
     this.find = this.find.bind(this);
     this.count = this.count.bind(this);
     this.remove = this.remove.bind(this);
@@ -221,6 +222,50 @@ class EdenModelMongo {
       id     : fetchedModelId,
       object : fetchedModelObject,
     };
+  }
+
+  /**
+   * raw
+   *
+   * @param {*} collectionId 
+   * @param {*} query 
+   */
+  raw(collectionId, query) {
+    // Wait for building to finish
+    this.building;
+
+    // Construct MQuery cursor from collection ID
+    const mQuery = MQuery(this._db.collection(collectionId));
+
+    // Fetch, map, and return found Model instance
+    // data found by cursor constructed from provided query
+    return this._queryToCursor(mQuery, query)._pipeline;
+  }
+
+  /**
+   * raw
+   *
+   * @param {*} collectionId 
+   * @param {*} query 
+   */
+  exec(collectionId, action, ...args) {
+    // Wait for building to finish
+    this.building;
+
+    // Construct MQuery cursor from collection ID
+    const collection = this._db.collection(collectionId);
+
+    // return promise
+    return new Promise((resolve) => {
+      // execute
+      collection[action](...args).toArray((err, data) => {
+        // reject error
+        if (err) return reject(err);
+  
+        // resolve
+        resolve(data);
+      });
+    });
   }
 
   /**
