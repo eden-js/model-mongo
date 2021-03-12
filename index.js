@@ -256,7 +256,7 @@ class EdenModelMongo {
     const collection = this._db.collection(collectionId);
 
     // return promise
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       // execute
       collection[action](...args).toArray((err, data) => {
         // reject error
