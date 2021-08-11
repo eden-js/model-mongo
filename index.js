@@ -34,6 +34,7 @@ class EdenModelMongo {
     this.insert = this.insert.bind(this);
     this.findOne = this.findOne.bind(this);
     this.findById = this.findById.bind(this);
+    this.findByIds = this.findByIds.bind(this);
     this.removeById = this.removeById.bind(this);
     this.replaceById = this.replaceById.bind(this);
 
@@ -222,6 +223,35 @@ class EdenModelMongo {
       id     : fetchedModelId,
       object : fetchedModelObject,
     };
+  }
+
+  /**
+   * Find Model data by collection ID and Model ID
+   */
+  async findByIds(collectionId, ids) {
+    // Wait for building to finish
+    await this.building;
+
+    // Construct MQuery cursor from collection ID
+    const mQuery = MQuery(this._db.collection(collectionId));
+
+    // If no Model instance data found, return null
+    return (await mQuery.in('_id', ids.map((id) => ObjectId(id))).exec()).map((rawModelRes) => {
+      // Get internal ID from returned data
+      const fetchedModelId = rawModelRes._id.toString();
+
+      // Delete internal ID from the object
+      delete rawModelRes._id;
+
+      // Get remaining now sanitized Model instance data
+      const fetchedModelObject = rawModelRes;
+
+      // Return correctly structured fetched Model instance data
+      return {
+        id     : fetchedModelId,
+        object : fetchedModelObject,
+      };
+    });
   }
 
   /**
