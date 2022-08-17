@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@edenjs/mquery": "^3.2.0",
-    "mongodb": "^3.7.3"
+    "mongodb": "^4.8.1",
+    "mquery": "^4.0.3"
   }
 }
